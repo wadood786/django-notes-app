@@ -17,13 +17,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
 from django.urls import path
-from .views import github_webhook
+#from .views import github_webhook
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
     path('', TemplateView.as_view(template_name='index.html')),
 ]
-urlpatterns = [
-    path("webhook/", github_webhook, name="github_webhook"),
-]
+# urlpatterns = [
+#     path("webhook/", github_webhook, name="github_webhook"),
+# ]
