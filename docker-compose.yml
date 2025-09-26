@@ -4,7 +4,7 @@ services:
   web:
     build:
       context: .
-    container_name: django_cont
+    container_name: 
     command: sh -c "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"
     ports:
       - "8000:8000"
