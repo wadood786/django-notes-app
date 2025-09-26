@@ -16,21 +16,32 @@ services:
       db:
         condition: service_healthy
     restart: always
+    networks:
+      - app_net
 
   db:
-    image: mysql:8
+    image: mysql:8.0.36
     container_name: db_cont
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: test_db
     volumes:
-      - ./data/mysql/db:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 60s
+    networks:
+      - app_net
+
+volumes:
+  mysql_data:
+
+networks:
+  app_net:
+
 
 
 
