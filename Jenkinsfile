@@ -43,7 +43,6 @@ pipeline {
                 sh '''
                     rm -rf ./data/mysql/db || true
                     mkdir -p ./data/mysql/db
-                    chown -R 999:999 ./data/mysql/db
                 '''
             }
         }
