@@ -7,7 +7,7 @@ pipeline{
             steps{
                 sh "whoami"
                 script{
-                    cloning("https://github.com/abdulwadood786/django-notes-app.git","main")
+                    cloning("https://github.com/wadood786/django-notes-app.git","main")
                 }
             }
         }
