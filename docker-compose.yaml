@@ -52,5 +52,7 @@ services:
     networks:
       - notes-app-nw
 
+volumes:
+  mysql_data:
 networks:
   notes-app-nw:
