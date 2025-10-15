@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django
+  namespace: notes-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: django
+  template:
+    metadata:
+      labels:
+        app: django
+    spec:
+      initContainers:
+      - name: wait-for-mysql
+        image: busybox
+        command:
+          - sh
+          - -c
+          - |
+            echo "Waiting for MySQL..."
+            until nc -z mysql 3306; do
+              sleep 2
+            done
+            echo "MySQL is ready!"
+      containers:
+      - name: django
+        image: abdulwadood786/notes-app-dev:latest
+        ports:
+          - containerPort: 8000
+        envFrom:
+          - configMapRef:
+              name: notes-env
+          - configMapRef:
+              name: notes-config
+          - secretRef:
+              name: notes-secrets
+        command:
+          - sh
+          - -c
+          - |
+            python manage.py migrate --no-input &&
+            gunicorn notesapp.wsgi --bind 0.0.0.0:8000
+        readinessProbe:
+          httpGet:
+            path: /admin
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /admin
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 15
+
+---
+            
+apiVersion: v1
+kind: Service
+metadata:
+  name: django
+  namespace: notes-app
+spec:
+  selector:
+    app: django
+  ports:
+    - port: 8000       # Port Nginx will use to reach Django
+      targetPort: 8000
+  type: ClusterIP
+
