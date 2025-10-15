@@ -1,8 +1,9 @@
 @Library('Shared') _ 
 pipeline {
     agent any
-    
+
     stages {
+
         stage("Code clone") {
             steps {
                 sh "whoami"
@@ -19,7 +20,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage("Code Build") {
             steps {
                 script {
@@ -40,9 +41,9 @@ pipeline {
             steps {
                 echo "🧹 Cleaning old MySQL data..."
                 sh '''
-                    sudo rm -rf ./data/mysql/db || true
-                    sudo mkdir -p ./data/mysql/db
-                    sudo chown -R 999:999 ./data/mysql/db
+                    rm -rf ./data/mysql/db || true
+                    mkdir -p ./data/mysql/db
+                    chown -R 999:999 ./data/mysql/db
                 '''
             }
         }
@@ -52,10 +53,23 @@ pipeline {
                 echo "🚀 Deploying the app..."
                 sh '''
                     docker compose down -v || true
-                    docker compose up -d --build
+                    docker compose build --no-cache
+                    docker compose up -d
                 '''
                 echo "✅ App has been deployed successfully."
             }
+        }
+    }
+
+    post {
+        always {
+            echo "🧾 Pipeline execution completed."
+        }
+        failure {
+            echo "❌ Deployment failed. Check logs above for details."
+        }
+        success {
+            echo "🎉 Deployment successful and containers are up."
         }
     }
 }
